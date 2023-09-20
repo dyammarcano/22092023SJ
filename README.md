@@ -10,7 +10,11 @@
 
 Etapas do projeto:
 
-- [3.1](#3.1) - Criar um repositório no GitHub
+- [3.1](#3.1) - Introduction To Broken Object Level Authorization
+- [3.2](#3.2) - Introduction To Broken Function Level Authorization
+- [3.2](#3.2) - Introduction To Broken Function Level Authorization
+- [3.2](#3.2) - Introduction To Broken Function Level Authorization
+- [3.2](#3.2) - Introduction To Broken Function Level Authorization
 
 
 ## 3.1
