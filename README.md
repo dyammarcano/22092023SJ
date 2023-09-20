@@ -46,3 +46,49 @@ Defense Hint
 The API endpoint shows a user's previous orders by ID, but does not verify if this order has been made by the current user. This allows the attacker to view another user's historical order data.
 
 To safeguard against this, ensure that the user token belongs to the user ID in request by adding an authorization check before returning orders to the user.
+
+Defending Against Broken Object Level Authorization
+In this lesson, we learned that even with a valid token, an attacker may use broken implementation of authorization checks and get access to another customer's order history.
+
+To protect against this, objects accessed via an API should always include authorization controls for every function, set up correct access permissions for users, and make sure all requests to resources require authorization validation.
+
+Lastly, an attacker may try to guess or use brute force to find object IDs, so ensure IDs are random and unpredictable values (e.g., UUID).
+
+Patch The Code
+Now, open the Code Editor to look at the vulnerable code, you may select the language of your choice.
+
+Add an authorization check so a user can only access their own order history. This can be done in the users query by checking the userid in addition to checking the apikey.
+
+Once you have edited the code successfully, click the Save Code button. This will update the running application. Try exploiting the vulnerability again to make sure you have fixed the vulnerability.
+
+```python
+import os
+import pymysql
+
+def get_orders(userid, apikey):
+    try:
+        conn = pymysql.connect(host='db', port=3306, user='root', passwd='letmein', db='EcommerceApp')
+        cursor = conn.cursor()
+
+        # Check if the user with the provided userid and apikey exists
+        cursor.execute("SELECT COUNT(*) FROM users WHERE apikey = %s and userid = %s;", (apikey, userid))
+        rowcount = cursor.fetchone()[0]
+
+        results = []
+        if rowcount == 1:
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT ordername, orderid, userid, total FROM orders WHERE userid = %s;", (userid,))
+            data = cursor.fetchall()
+
+            result = {"results": data}
+            results.append(result)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return results
+    except Exception as e:
+        print(e)
+        raise e
+```
